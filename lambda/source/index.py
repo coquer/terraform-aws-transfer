@@ -89,28 +89,26 @@ def lookup(secret_dict, key, input_protocol):
 
 
 def check_ipaddress(secret_dict, input_sourceIp, input_protocol):
-    accepted_ip_network = lookup(secret_dict, "AcceptedIpNetwork", input_protocol)
-    if not accepted_ip_network:
+    accepted_ip_networks = lookup(secret_dict,
+                                 "AcceptedIpNetwork", input_protocol)
+    if not accepted_ip_networks:
         # No IP provided so skip checks
         print("No IP range provided - Skip IP check")
         return True
 
-    net = ip_network(accepted_ip_network)
-    ip_list = input_sourceIp.split(",")
-
-    for ip in ip_list:
-        if ip_address(ip) in net:
+    for accepted_ip_network in accepted_ip_networks.split(","):
+        net = ip_network(accepted_ip_network)
+        if ip_address(input_sourceIp) in net:
             print("Source IP address match")
             return True
-        else:
-            print("Source IP address not in range")
-            return False
+
+    return False
 
 
 def authenticate_user(auth_type, secret_dict, input_password, input_protocol):
     # Function returns True if: auth_type is password and passwords match
     # or auth_type is SSH.
-    # Otherwise returns False
+    # Otherwise, returns False
     if auth_type == "SSH":
         # Place for additional checks in future
         print("Skip password check as SSH login request")
