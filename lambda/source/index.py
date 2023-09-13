@@ -89,20 +89,22 @@ def lookup(secret_dict, key, input_protocol):
 
 
 def check_ipaddress(secret_dict, input_sourceIp, input_protocol):
-    accepted_ip_network = lookup(secret_dict,
-                                 "AcceptedIpNetwork", input_protocol)
+    accepted_ip_network = lookup(secret_dict, "AcceptedIpNetwork", input_protocol)
     if not accepted_ip_network:
         # No IP provided so skip checks
         print("No IP range provided - Skip IP check")
         return True
 
     net = ip_network(accepted_ip_network)
-    if ip_address(input_sourceIp) in net:
-        print("Source IP address match")
-        return True
-    else:
-        print("Source IP address not in range")
-        return False
+    ip_list = input_sourceIp.split(",")
+
+    for ip in ip_list:
+        if ip_address(ip) in net:
+            print("Source IP address match")
+            return True
+        else:
+            print("Source IP address not in range")
+            return False
 
 
 def authenticate_user(auth_type, secret_dict, input_password, input_protocol):
