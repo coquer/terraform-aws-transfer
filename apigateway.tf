@@ -1,5 +1,5 @@
 resource "aws_iam_role" "iam_for_apigateway_idp" {
-  name = "iam_for_apigateway_idp-${var.stage}"
+  name = "iam_for_apigateway_idp-${local.transfer_name}"
 
   assume_role_policy = <<-EOF
     {
@@ -57,7 +57,7 @@ resource "aws_api_gateway_deployment" "deployment" {
 }
 
 resource "aws_api_gateway_stage" "stage" {
-  stage_name    = var.stage
+  stage_name    = local.transfer_name
   rest_api_id   = aws_api_gateway_rest_api.sftp-idp-secrets.id
   deployment_id = aws_api_gateway_deployment.deployment.id
 }
