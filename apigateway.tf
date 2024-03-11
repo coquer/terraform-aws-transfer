@@ -1,21 +1,18 @@
 resource "aws_iam_role" "iam_for_apigateway_idp" {
   name = "iam_for_apigateway_idp-${local.transfer_name}"
 
-  assume_role_policy = <<-EOF
-    {
-      "Version": "2012-10-17",
-      "Statement": [
-        {
-          "Action": "sts:AssumeRole",
-          "Principal": {
-            "Service": "apigateway.amazonaws.com"
-          },
-          "Effect": "Allow",
-          "Sid": ""
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
+        Principal = {
+          Service = "apigateway.amazonaws.com"
         }
-      ]
-    }
-  EOF
+      }
+    ]
+  })
 }
 
 
@@ -29,7 +26,7 @@ resource "aws_api_gateway_account" "api_gateway_account" {
 }
 
 resource "aws_api_gateway_rest_api" "sftp-idp-secrets" {
-  name        = "sftp-idp-secrets"
+  name        = "sftp-idp-secrets-${local.transfer_name}"
   description = "This API provides an IDP for AWS Transfer service"
   endpoint_configuration {
     types = ["REGIONAL"]

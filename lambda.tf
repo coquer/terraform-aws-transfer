@@ -22,21 +22,18 @@ data "archive_file" "sftp-idp" {
 resource "aws_iam_role" "iam_for_lambda_idp" {
   name = "iam_for_lambda_idp-${local.transfer_name}"
 
-  assume_role_policy = <<-EOF
-    {
-      "Version": "2012-10-17",
-      "Statement": [
-        {
-          "Action": "sts:AssumeRole",
-          "Principal": {
-            "Service": "lambda.amazonaws.com"
-          },
-          "Effect": "Allow",
-          "Sid": ""
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
+        Principal = {
+          Service = "lambda.amazonaws.com"
         }
-      ]
-    }
-  EOF
+      }
+    ]
+  })
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_logs_idp" {
@@ -49,18 +46,16 @@ resource "aws_iam_policy" "sftp-idp" {
   path        = "/"
   description = "IAM policy IdP service for SFTP in Lambda"
 
-  policy = <<-EOF
-    {
-        "Version": "2012-10-17",
-        "Statement": [
-            {
-                "Effect": "Allow",
-                "Action": "secretsmanager:GetSecretValue",
-                "Resource": "arn:aws:secretsmanager:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:secret:SFTP/${var.name}-*"
-            }
-        ]
-    }
-  EOF
+  policy = jsonencode({
+    Version : "2012-10-17",
+    Statement : [
+      {
+        Effect : "Allow",
+        Action : "secretsmanager:GetSecretValue",
+        Resource : "arn:aws:secretsmanager:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:secret:SFTP/${var.name}-*"
+      }
+    ]
+  })
 }
 
 resource "aws_iam_role_policy_attachment" "sftp-idp1" {
