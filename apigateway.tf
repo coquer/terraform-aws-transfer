@@ -39,7 +39,7 @@ resource "aws_lambda_permission" "allow_apigateway" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.sftp-idp.function_name
   principal     = "apigateway.amazonaws.com"
-  source_arn    = "${aws_api_gateway_rest_api.sftp-idp-secrets.execution_arn}/*/*/*"
+  source_arn    = aws_api_gateway_rest_api.sftp-idp-secrets.execution_arn
 }
 
 resource "aws_api_gateway_deployment" "deployment" {
